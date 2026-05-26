@@ -33,7 +33,9 @@ public class EnvioService {
             if (pedido != null) {
                 envio.setDireccionEnvio(pedido.getDireccionEnvio());
                 envio.setFechaEnvio(LocalDate.now());
+                if (envio.getEstadoEnvio() == null) {
                 envio.setEstadoEnvio(EstadoEnvio.PREPARANDO);
+            }
                 System.out.println("*************************");
                 System.out.println(envio);
                 System.out.println("*************************");
