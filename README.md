@@ -11,9 +11,10 @@ Microservicio encargado de la gestión de envíos dentro del sistema **BookPoint
 - **Spring Web MVC**
 - **Spring Data JPA**
 - **MySQL** (entorno de producción/desarrollo)
+- **H2** (base de datos en memoria para tests)
 - **Lombok** — reducción de código boilerplate
 - **RestTemplate** — comunicación con otros microservicios
-- **JUnit 5** — pruebas unitarias
+- **JUnit 5 + Mockito** — pruebas unitarias e integración
 
 ---
 
@@ -57,6 +58,20 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+```
+
+### `src/test/resources/application-test.properties`
+
+```properties
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql=TRACE
 ```
 
 ---
@@ -140,7 +155,8 @@ Rutas configuradas en el gateway:
 ## 🧪 Tests
 
 - `@ExtendWith(MockitoExtension.class)` con `@Mock` / `@InjectMocks`
-- `@SpringBootTest` + `@AutoConfigureMockMvc`
+- `@SpringBootTest` + `@AutoConfigureMockMvc` + `@ActiveProfiles("test")`
+- Base de datos H2 en memoria para tests
 
 ---
 
@@ -167,8 +183,15 @@ ms-envio/
 │   │   └── resources/
 │   │       └── application.properties
 │   └── test/
-│       └── java/BookPoint/envio/
-│           └── EnvioApplicationTests.java
+│       ├── java/BookPoint/envio/
+│       │   ├── controller/
+│       │   │   ├── EnvioControllerIT.java
+│       │   │   └── EnvioControllerTest.java
+│       │   ├── service/
+│       │   │   └── EnvioServiceTest.java
+│       │   └── EnvioApplicationTests.java
+│       └── resources/
+│           └── application-test.properties
 └── pom.xml
 ```
 
